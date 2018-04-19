@@ -1,2 +1,5 @@
 tests/json
 tests/docx
+*.pyc
+tests/ghostdriver.log
+tests/geckodriver.log

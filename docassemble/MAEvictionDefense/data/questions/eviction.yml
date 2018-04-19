@@ -23,7 +23,6 @@ sections:
   - Relief
   - Discovery
   - Conclusion
-
 ---
 features:
   question help button: True
@@ -42,7 +41,6 @@ features:
 #  css: logonav.css
 ---
 modules:
-  - docassemble.base.util
   - docassemble.base.legal
 ---
 objects:
@@ -111,6 +109,8 @@ subquestion: |
   Words that you may not understand will be {highlighted in green}. Click on a green
   word to learn more. Click the "[Help]" button at any time to learn more about this
   interview.
+
+  [Help]: ${ url_of('help') }
 field: user_saw_initial_screen
 terms: 
   - highlighted in green: This is an example. Click it again to hide this definition.
@@ -168,9 +168,10 @@ subquestion: |
   
   If you don't have either document, 
   you can still do your best to answer from your memory.
-field: getting_started
 buttons: 
-  - Continue: continue
+  - Continue:
+      code: |
+        getting_started = True
   - Exit: exit
 ---
 question: |

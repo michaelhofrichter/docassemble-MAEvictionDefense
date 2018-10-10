@@ -1,0 +1,17 @@
+mandatory: True
+question: |
+  A question
+fields:
+  - "Were you given a {Notice to Quit}?": notice_to_quit_served
+    datatype: yesnoradio
+  - show if: 
+      variable: notice_to_quit_served
+      is: False
+    note: |
+      Oh really?  You know, that means that the tenancy was not 
+      terminated properly.
+terms:
+  Notice to Quit: |
+    A Notice to Quit is a notice your landlord gives you
+    that tells you that your landlord is terminating your
+    lease.

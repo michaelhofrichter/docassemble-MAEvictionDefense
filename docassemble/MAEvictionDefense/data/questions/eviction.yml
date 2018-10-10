@@ -248,6 +248,8 @@ include:
   - security_deposit_and_prepaid_rent.yml
   - discovery-logic.yml
 #  - basic-questions.yml
+  - request_for_interpreter.yml
+  - transfer.yml
 ---
 question: Sign below
 subquestion: |
@@ -325,9 +327,24 @@ attachment:
   - name: Answer Form
     filename: Answer.docx
     docx template file: SummaryProcessAnswer_Finaledit.docx
+    valid formats:
+      - docx
   - name: Request for Discovery
     filename: Discovery.docx
     docx template file: SummaryProcessDiscovery.docx
+    valid formats:
+      - docx
+  - name: Request for Interpreter
+    filename: Request_for_Interpreter.docx
+    docx template file: Request_for_Interpreter.docx
+    mandatory: True
+    valid formats:
+      - docx
+  - name: Notice of Transfer
+    filename: Transfer.docx
+    docx template file: Transfer.docx
+    valid formats:
+      - docx
 
 section: Conclusion 
 

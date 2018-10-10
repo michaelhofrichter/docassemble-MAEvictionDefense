@@ -1,0 +1,114 @@
+metadata:
+  title: |
+    Debt Verification Letter
+  description: |
+    This interview helps you verify the debt collection letter you received.
+  authors:
+    -organization: Greater Boston Legal Services
+    -revision_date: 2017-12-14
+---
+features:
+  progress bar: True
+  bootstrap theme: https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css
+  css: base4.css
+---
+modules:
+  - docassemble.base.util
+---
+include:
+  - basic-questions.yml
+  - help.yml
+  - glossary.yml
+---
+objects:
+  - debtor: Individual
+  - debt_collector: Individual 
+  - account_number: DAObject
+  - phone_or_mail: DAObject
+  - contact_date: DAObject
+  - debt_information: DAObject
+  - recognize_creditor: DAObject
+  - debt_buyer_companies: DAObject
+  - law_firms: DAObject
+  - other_collector: DAObject
+---
+mandatory: True
+question: |
+  Tell us some information about you ${ debtor.name }?
+fields:
+  - address: debtor.address.address
+  - unit: debtor.address.unit
+    required: False
+  - city: debtor.address.city
+  - state: debtor.address.state
+  - zip: debtor.address.zip
+  - country: debtor.address.country
+    default: 'US'
+---
+mandatory: True
+question: | 
+  Please select who contacted you or select other.
+fields: 
+  - Debt Buyer Companies: debt_buyer_companies
+    choices:
+      - Midland Funding, LLC 3111 Camino del Rio North San Diego, CA 92108: midland
+      - LVNV Funding, LLC 625 Pilot Road Suite 3 Las Vegas, NV 89119: lvnv
+      - Portfolio Recovery Associates, LLC 120 Corporate Blvd. Suite 100 Norfolk, VA 23502: portfolio
+      - Cavalry SPV I, LLC 500 Summit Lake Drive Suite 400 Valhalla, NY 10595: cavalry	
+      - MSW Capital, LLC 1990 Main Street, Ste. 750 Sarasota, FL 34236: msw
+      - CACH, LLC 625 Pilot Road, Suite 21 Las Vegas, NV 89119: cach
+      - Waterfront Capital, LLC 5 Scenic Lane Hudson, NH 03051: waterfront
+  - Law Firms: law_firms
+    choices:
+      - Schreiber/Cohen, LLC 53 Stiles Road, Suite A-102 Salem, NH 03079: schreiber
+      - Goldberg & Oriel 199 Wells Ave, Suite 209 Newton, MA 02459: goldberg
+      - Lustig, Glaser & Wilson, P.C. P.O. Box 549287 Waltham, MA 02454-9287: lustig
+      - Law Offices Howard Lee Schiff, P.C. PO Box 280245 East Hartford, CT 06128-0245: howard
+      - Solomon & Solomon, P.C. 5 Columbia Circle Albany, NY 12203: solomon
+      - J.A. Cambece Law Office, P.C. 200 Cummings Center, Ste. 173D Beverly, MA 01915: cambece
+      - Kream and Kream – Attorneys at Law PO Box 890117 East Weymouth, MA 02189-9955: kream
+---
+mandatory: True
+question: |
+  Tell us some information about your debt collector ${ debt_collector.name }?
+fields:
+  - address: debt_collector.address.address
+  - unit: debt_collector.unit
+    required: False
+  - city: debt_collector.address.city
+  - state: debt_collector.address.state
+  - zip: debt_collector.address.zip
+  - country: debt_collector.address.country
+    default: 'US'
+---
+mandatory: True
+question: |
+  Do you know your account number?
+fields:
+  - Account Number: account_number
+    required: false
+---
+question: |
+  How were you contacted?
+field: phone_or_mail
+dropdown:
+  - Phone
+  - Mail
+---
+question: |
+  About when were you contacted by your debt collector?
+fields:
+  - Contact Date: contact_date
+    datatype: date
+---
+question: |
+  What other information did they give you about this debt?
+fields:
+  - Given debt information: debt_information
+    datatype: area
+---
+mandatory: True
+question: |
+  Here is your document. 
+attachment:
+  docx template file: DebtVerification.docx

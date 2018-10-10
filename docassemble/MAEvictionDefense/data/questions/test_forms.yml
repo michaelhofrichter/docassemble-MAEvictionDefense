@@ -1,0 +1,221 @@
+---
+modules:
+  - docassemble.base.util
+  - docassemble.base.legal
+---
+objects:
+  - tenant: Individual
+  - landlord: Person
+  - court: Court
+  - county: DAObject
+  - case: DAObject
+---
+include:
+  - transfer.yml
+  - request_for_interpreter.yml
+---
+question: What is your name?
+fields:
+  - First Name: tenant.name.first
+    default: ${user_info().first_name}
+  - Middle Name: tenant.name.middle
+    required: False
+  - Last Name: tenant.name.last
+    default: ${user_info().last_name}
+  - Suffix: tenant.name.suffix
+    required: False
+    code: |
+      name_suffix()
+---
+question: |
+  What is your current address?
+fields:
+  - address: tenant.address.address
+    address autocomplete: True
+  - unit: tenant.address.unit
+    required: False
+  - city: tenant.address.city
+  - state: tenant.address.state
+    code: |
+      states_list()
+    default: "MA"
+  - zip: tenant.address.zip
+  - county: tenant.address.county
+    required: False
+  - Phone number: tenant.phone_number
+    required: False
+  - Email address: tenant.email
+    required: False
+---
+mandatory: True
+code: |
+  tenant.address.geolocate()
+---
+question: What is the Landlord's name?
+subquestion: |
+  To answer this question, look at the Summons and Complaint. Write your landlord's
+  name exactly the same way it is written on the line "...defend against the complaint
+  of Plaintiff / Landlord / Owner"
+fields:
+  - Name: landlord.name.text
+---
+---
+need: local_housing_court
+question: |
+  What court is your case being heard in?
+subquestion: |
+  Look at the upper-right-hand corner of the Summons and Complaint form. Pick the name of the court from the list(s) below.  
+  
+  [FILE court_and_county.png, 100%]
+fields: 
+  - Court name: court.name
+    default: ${local_housing_court}
+    choices:
+      - Central Housing Court
+      - Eastern Housing Court
+      - Metro South Housing Court
+      - Northeast Housing Court
+      - Southeast Housing Court
+      - Western Housing Court
+      - -----------------------
+      - Barnstable District Court
+      - Brighton Division Boston Municipal Court
+      - Brookline District Court
+      - Cambridge District Court
+      - Central Division Boston Municipal Court
+      - Charlestown Division Boston Municipal Court
+      - Chelsea District Court
+      - Concord District Court
+      - Dedham District Court
+      - Dorchester Division Boston Municipal Court
+      - East Boston Division Boston Municipal Court
+      - Falmouth District Court
+      - Framingham District Court
+      - Hingham District Court
+      - Lowell District Court
+      - Malden District Court
+      - Marlborough District Court
+      - Middlesex Superior Court
+      - Natick District Court
+      - Newton District Court
+      - Norfolk Superior Court
+      - Northern Berkshire District Court
+      - Orleans District Court
+      - Quincy District Court
+      - Roxbury Division Boston Municipal Court
+      - Somerville District Court
+      - South Boston Division Boston Municipal Court
+      - Stoughton District Court
+      - Suffolk Superior Court
+      - Waltham District Court
+      - West Roxbury Division Boston Municipal Court
+      - Woburn District Court
+      - Worcester District Court
+  - County: court.county
+    default: ${tenant.address.county}
+    choices:
+      - Barnstable County
+      - Berkshire County
+      - Bristol County
+      - Dukes County
+      - Essex County
+      - Franklin County
+      - Hampden County
+      - Hampshire County
+      - Middlesex County
+      - Nantucket County
+      - Norfolk County
+      - Plymouth County
+      - Suffolk County
+      - Worcester County
+---
+code: |
+  if (tenant.address.county == "Suffolk County") or (tenant.address.city in ["Arlington","Belmont","Cambridge","Medford","Newton","Somerville","Brookline"]):
+    local_housing_court = "Eastern Housing Court"
+  elif tenant.address.county in ["Berkshire County","Franklin County","Hampden County","Hampshire County"]:
+    local_housing_court = "Western Housing Court"
+  elif (tenant.address.county == "Worcester County") or (tenant.address.city in ["Ashland","Framingham","Holliston","Hopkinton","Hudson","Marlborough","Natick","Sherborn","Sudbury","Wayland"]):
+    local_housing_court = "Central Housing Court"
+  elif (tenant.address.county == "Norfolk" and tenant.address.city != "Brookline") or (tenant.address.city in ["Abington","Bridgewater","Brockton","East Bridgewater","West Bridgewater","Whitman"]): 
+    local_housing_court = "Metro South Housing Court"
+  elif (tenant.address.county == "Essex County") or (tenant.address.county == "Middlesex County" and tenant.address.city not in ["Arlington","Belmont","Cambridge","Medford","Newton","Somerville","Ashland","Framingham","Holliston","Hopkinton","Hudson","Marlborough","Natick","Sherborn","Sudbury","Wayland"]):
+    local_housing_court = "Northeast Housing Court"
+  elif (tenant.address.county in ["Barnstable County","Bristol County","Dukes County","Nantucket County"]) or (tenant.address.county == "Plymouth County" and tenant.address.city not in ["Abington","Bridgewater","Brockton","East Bridgewater","West Bridgewater","Whitman"]):
+    local_housing_court = "Southeast Housing Court"
+  else:
+    local_housing_court = ""
+---
+question: |
+  Hearing Date
+subquestion: |
+  To answer this question, please take a look at your Summons and Complaint. 
+  Find the line that begins with NOTICE TO EACH DEFENDANT/TENANT.
+  
+  [FILE dates.png, 100%]
+  
+fields:
+  - What is the date of your first hearing?: case.original_date
+    datatype: date
+    hint: Often a Thursday.
+  - What is the date it says the court must have your Answer? (This is usually a Monday): case.answer_date
+    datatype: date
+    hint: Usually a Monday
+---
+code: |
+  case.entry_date = case.answer_date + date_interval(days=-7)
+---
+code: |
+  if int(date_difference(starting=current_datetime(), ending=case.answer_date).days) >= 0:
+    case.rescheduled_date = format_date(as_datetime(case.original_date) + date_interval(days=14))
+    case.on_time = True
+  else:
+    case.rescheduled_date = case.original_date
+    case.on_time = False
+---
+mandatory: True
+question: |
+  Upcoming court dates
+subquestion: |
+  This interview is designed to help a tenant whose case is scheduled in court for
+  the first time. It can also help you ask for permission to file late.
+  What best describes ${tenant.name}'s case?
+field: case.status
+choices: 
+  - I have a notice from my landlord but I am not scheduled for court yet.: onlyntq
+  - I have a court date scheduled: summons
+  - I signed an agreement in this case already. I have a new court date coming up.: afj
+  - I missed my first court date.: late
+default: summons
+---
+mandatory: True
+question: |
+  Method of Service
+fields: 
+  - Delivery method: method_of_service
+    choices:
+      - Mail: mailed
+      - Delivering by hand: delivered in-hand
+      - Email (with permission of my landlord): emailed
+      - Fax (with permission of my landlord): faxed
+  - Date of delivery: service_date
+    datatype: date
+---
+question: Sign below
+subquestion: |
+  When you sign these forms, you are saying that your answers to the questions
+  in this interview are true as far as you know.
+  
+signature: tenant.signature
+under: |
+  ${ tenant.name }
+---
+question: Here are your documents.
+attachments:
+  - name: Request for Interpreter
+    filename: Request_for_Interpreter.docx
+    docx template file: Request_for_Interpreter.docx
+    mandatory: True
+  - name: Notice of Transfer
+    filename: Transfer.docx
+    docx template file: Transfer.docx
+mandatory: True

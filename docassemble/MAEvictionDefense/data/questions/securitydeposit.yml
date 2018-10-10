@@ -1,0 +1,119 @@
+metadata:
+  title: |
+    Security Deposit Demand Letter
+  description: |
+    This interview helps you complete a security deposit demand letter.
+  authors:
+    -organization: Greater Boston Legal Services
+    -revision_date: 2017-10-18
+---
+features:
+  progress bar: True
+  bootstrap theme: https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css
+  css: base4.css
+  #css: activate.css
+---
+modules:
+  - docassemble.base.util
+---
+include:
+  - basic-questions.yml
+  - help.yml
+  - glossary.yml
+---
+objects:
+  - tenant: Individual
+  - landlord: Individual 
+  - securitydeposit: DAObject
+  - date: DAObject
+---
+mandatory: true
+question: |
+  About this Interview
+subquestion: |
+  This interview will help you complete a security deposit demand letter.
+  
+  Send the letter by certified mail, return receipt requested. Keep a copy for your records.
+  
+  Words that you may not understand will be {highlighted in green}. Click on a green
+  word to learn more. Click the "[Help]" button at any time to learn more about this
+  interview. If "Help <i class="glyphicon glyphicon-star"></i>"
+  appears in the navigation bar, that means help text specific to the
+  question is available.
+field: user_saw_initial_screen
+terms: 
+  - highlighted in green: This is an example. Click it again to hide this definition.
+buttons: 
+  - Continue: continue
+---
+mandatory: true
+question: |
+  How Do I Get My Security Deposit Back?
+subquestion: |
+  If your landlord does not return your security deposit when she should or she fails to follow the law, you can send her a demand letter.
+
+  If you send a demand letter and she still does not return your security deposit, you can take her to court.
+buttons: 
+  - Continue: continue
+---
+mandatory: True
+question: |
+  Tell us some information about you ${ tenant.name }?
+fields:
+  - address: tenant.address.address
+  - unit: tenant.address.unit
+    required: False
+  - city: tenant.address.city
+  - state: tenant.address.state
+  - zip: tenant.address.zip
+  - country: tenant.address.country
+    default: 'US'
+---
+mandatory: True
+question: |
+  Tell us some information about your landlord ${ landlord.name }?
+fields:
+  - address: landlord.address.address
+  - unit: landlord.address.unit
+    required: False
+  - city: landlord.address.city
+  - state: landlord.address.state
+  - zip: landlord.address.zip
+  - country: landlord.address.country
+    default: 'US'
+---
+question: |
+  When did you accept your security deposit and what amount was it?
+fields:
+  - Deposit date: securitydeposit.date
+    datatype: date
+  - Deposit amount: securitydeposit.amount
+    datatype: currency
+---
+question: Request to Return Security Deposit 
+subquestion: |
+  Your landlord must follow the requirements of the security deposit law, Massachusetts General Laws Chapter G.L. c. 93A. Select the reason(s) why your security deposit must be returned (Select all that apply).
+fields:
+      - Did not put my money in a bank account separate which is protected from creditors and separate from your money: no_separate_bank_account
+        datatype: yesno
+      - Did not give me a receipt within 30 days of receiving my security deposit with the amount of the security deposit, the name and address of the bank where it is being held, and the bank account number: no_receipt
+        datatype: yesno
+      - Did not allow me to inspect the records you must keep under the security deposit law: no_records_inspection 
+        datatype: yesno
+      - Asked me to give up my security deposit rights: give_up_rights
+        datatype: yesno
+      - Failed to transfer the security deposit to the new owner: failed_transfer
+        datatype: yesno   
+---
+
+---
+question: Please sign below
+signature: tenant.signature
+under: |
+  ${ tenant.name }
+---
+mandatory: True
+question: |
+  Here is your document. 
+attachment:
+  docx template file: SecurityDepositLetter.docx

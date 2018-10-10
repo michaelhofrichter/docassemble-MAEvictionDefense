@@ -1,0 +1,129 @@
+metadata:
+  title: |
+    Transferring Your Court Case
+  description: |
+    This interview helps you complete a transfer form
+  authors:
+    -organization: Greater Boston Legal Services
+    -revision_date: 2017-10-18
+---
+features:
+  progress bar: True
+  bootstrap theme: https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css
+  css: base4.css
+---
+modules:
+  - docassemble.base.util
+---
+include:
+  - help.yml
+  - glossary.yml
+---
+objects:
+  - tenant: Individual
+  - landlord: Individual 
+  - date: DAObject
+  - transfer_to_court: DAObject
+  - tenant.signature: DAObject
+  - tenant.telephone: DAObject
+  - court: Individual
+#  - tenant.email: DAObject
+---
+mandatory: True
+question: |
+  What is your name?
+fields:
+  - Name: tenant.name
+###################################################
+---
+mandatory: true
+question: |
+  What is your docket number?
+fields:
+  - Docket Number: docketnumber
+---
+mandatory: true
+question: |
+  What is your county?
+field: county
+dropdown:
+  - Suffolk
+  - Barnstable
+  - Berkshire
+  - Bristol
+  - Dukes
+  - Essex
+  - Franklin
+  - Hampden
+  - Hampshire
+  - Middlesex
+  - Nantucket
+  - Norfolk
+  - Plymouth
+  - Worcester
+---
+mandatory: true
+question: |
+  What court is your case currently scheduled for trial?
+fields:
+  - Name of Court: court.name
+---
+mandatory: True
+question: |
+  Tell us some information about you ${ tenant.name }?
+fields:
+  - address: tenant.address.address
+  - unit: tenant.address.unit
+    required: False
+  - city: tenant.address.city
+  - state: tenant.address.state
+  - zip: tenant.address.zip
+  - country: tenant.address.country
+    default: 'US'
+  - telephone: tenant.telephone
+  - email: tenant.email
+    required: False
+---
+mandatory: True
+question: |
+  What is your landlord's name?
+fields:
+  - Name: landlord.name
+---
+mandatory: True
+question: |
+  Tell us some information about your landlord ${ landlord.name }?
+fields:
+  - address: landlord.address.address
+  - unit: landlord.address.unit
+    required: False
+  - city: landlord.address.city
+  - state: landlord.address.state
+  - zip: landlord.address.zip
+  - country: landlord.address.country
+    default: 'US'
+  - telephone: landlord.telephone
+    
+--- 
+mandatory: true
+question: |
+  Which Housing Court are you transferring your case to?
+field: transfer_to_court
+dropdown:
+  - Boston
+  - Worcester
+  - Northeastern
+  - Southeastern
+  - Western Massachusetts
+---
+mandatory: true
+question: Please sign below
+signature: tenant.signature
+under: |
+  ${ tenant.name }
+---
+mandatory: True
+question: |
+  Here is your document. 
+attachment:
+  docx template file: Transferdraft.docx

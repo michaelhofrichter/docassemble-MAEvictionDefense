@@ -1,0 +1,194 @@
+metadata:
+  title: |
+    Massachusetts Eviction Motion to Dismiss
+  short title: |
+    Motion to Dismiss
+  description: |
+    This interview helps you file a motion to dismiss.
+  authors:
+    - name: Quinten Steenhuis
+      organization: Greater Boston Legal Services
+    - name: Rina Padua
+      organization: Greater Boston Legal Services
+  revision_date: 2018-03-23
+---
+question: |
+  What is your first and last name?
+fields:
+  - Your Full Name: tenant_name
+---
+question: |
+  What is your landlord's first and last name?
+fields:
+  - Your Landlord's Full Name: landlord_name
+---
+question: |
+  What is your current address?
+fields:
+  - Street Name: street
+  - Unit: unit
+    required: False
+  - City: city
+  - State: state
+    default: "MA"
+  - Zipcode: zipcode
+  - Phone number: telephone
+---
+question: |
+  What court is your case being heard in?
+subquestion: |
+  Copy the name of the court and county from the upper-left-hand corner of the Summons and Complaint form.  
+fields: 
+  - Court name: court
+    choices:
+      - Central Housing Court
+      - Eastern Housing Court
+      - Metro South Housing Court
+      - Northeast Housing Court
+      - Southeast Housing Court
+      - Western Housing Court
+      - Barnstable District Court
+      - Brighton Division Boston Municipal Court
+      - Brookline District Court
+      - Cambridge District Court
+      - Central Division Boston Municipal Court
+      - Charlestown Division Boston Municipal Court
+      - Chelsea District Court
+      - Concord District Court
+      - Dedham District Court
+      - Dorchester Division Boston Municipal Court
+      - East Boston Division Boston Municipal Court
+      - Falmouth District Court
+      - Framingham District Court
+      - Hingham District Court
+      - Lowell District Court
+      - Malden District Court
+      - Marlborough District Court
+      - Middlesex Superior Court
+      - Natick District Court
+      - Newton District Court
+      - Norfolk Superior Court
+      - Northern Berkshire District Court
+      - Orleans District Court
+      - Quincy District Court
+      - Roxbury Division Boston Municipal Court
+      - Somerville District Court
+      - South Boston Division Boston Municipal Court
+      - Stoughton District Court
+      - Suffolk Superior Court
+      - Waltham District Court
+      - West Roxbury Division Boston Municipal Court
+      - Woburn District Court
+      - Worcester District Court
+  - County: county
+    choices:
+      - Barnstable County
+      - Berkshire County
+      - Bristol County
+      - Dukes County
+      - Essex County
+      - Franklin County
+      - Hampden County
+      - Hampshire County
+      - Middlesex County
+      - Nantucket County
+      - Norfolk County
+      - Plymouth County
+      - Suffolk County
+      - Worcester County
+---
+question: |
+  What date was your Notice to Quit received?
+fields:
+  - Notice to Quit date: ntq_date
+    datatype: date
+---
+question: |
+  When was your Answer due?
+subquestion: |
+  The answer date is typically the Monday after the day the landlord has filed the case. It is sometimes shown on the summons and complaint. 
+fields:
+  - Answer due date: answer_date
+    datatype: date
+---
+question: |
+  Payment of rent
+subquestion: |
+  If you paid rent after receiving the notice to quit, it may be a reason for your
+  landlord's case to be dismissed.
+fields:
+  - Did you owe any rent on ${ntq_date}?: paid_all_rent_owed
+    datatype: noyesradio
+  - Did you pay or offer to pay the full amount of rent you owed after ${ntq_date}? : rent_paid 
+    datatype: yesnoradio
+    show if:
+      variable: paid_all_rent_owed
+      is: False
+  - When did you pay the rent? : date_rent_paid
+    datatype: date
+    required: False
+    show if: rent_paid
+---
+question: |
+  Type of Tenancy
+fields:
+  - What type of tenancy do you have?: tenancy_type
+    choices:
+      - Tenant with Lease (written agreement): tenancy_lease
+      - Tenant at Will (month to month): tenancy_at_will
+---
+code: |
+  if tenancy_type == 'tenancy_lease':
+    if paid_all_rent_owed and date_rent_paid <= answer_date:
+      rent_cured = True
+    else:
+      rent_cured = False
+  else:
+    if paid_all_rent_owed and date_rent_paid <= (ntq_date + date_interval(days=10)) :
+      rent_cured = True
+    else :
+      rent_cured = False
+---
+question: |
+  Landlord Accepted Rent After Notice to Quit
+subquestion: |
+  If the landlord accepted any rent after sending the notice to quit without including a “reservation of rights” in the notice to quit or immediately when accepting the rent, the termination may be “waived”. 
+  
+  A reservation of rights looks like this: “any payments will be accepted for use and occupancy only and will not reinstate the tenancy.”
+fields: 
+  - Did your landlord accept any rent after ${ntq_date} without "reservation of rights"?: accepted_rent_after_ntq
+    datatype: yesno
+---
+question: |
+  Method of Service
+subquestion: |
+  When and how will you bring the paperwork to your landlord or their attorney?
+fields: 
+  - Delivery method: method_of_service
+    choices:
+      - Mail: mailed
+      - Delivering by hand: delivered in-hand
+      - Email (with permission of my landlord): emailed
+      - Fax (with permission of my landlord): faxed
+  - Date of delivery: service_date
+    datatype: date
+---
+question: Please sign below
+subquestion: |
+  By signing below, you acknowledge that your answers to the questions
+  in this interview were truthful, to the best of your knowledge.
+signature: tenant_signature
+under: |
+  ${ tenant_name }
+---
+mandatory: True
+question: |
+  Your documents are ready. Please print and file!
+attachment:
+  - name: Motion To Dismiss
+    filename: Motion to Dismiss
+    docx template file: Motion_to_Dismiss-Final.docx
+need: 
+  - tenant_name
+  - landlord_name
+  - street

@@ -1,0 +1,74 @@
+mandatory: true
+question: |
+  Do you want to transfer your case from ${ court.name } to a Housing Court?
+subquestion: |
+  You have a right to have it transferred to a Housing Court, 
+  
+  where they are familiar with landlord/tenant laws and 
+  
+  you are likely to get more assistance with your case.
+yesno: request_transfer
+---
+mandatory: True
+question: |
+  What is the name of your **landlord's lawyer**?
+subquestion: |
+  If your landlord does not have a lawyer, provide your landlord's name.
+fields:
+  - First Name: landlord.name.first
+  - Last Name: landlord.name.last
+---
+mandatory: True
+question: |
+  What is the address of your landlord's attorney? Check your Summons and Complaint and look for the section as pictured below. 
+  
+  [FILE attorney_address_edit.png, 100%]
+subquestion: |
+  If your landlord does not have a lawyer, provide your landlord's address.
+fields:
+  - address: landlord.address.address
+    address autocomplete: True
+  - unit: landlord.address.unit
+    required: False
+  - city: landlord.address.city
+  - state: landlord.address.state
+    code: |
+      states_list()
+    default: "MA"
+  - zip: landlord.address.zip
+  - country: landlord.address.country
+    default: "US"
+  - telephone: landlord.telephone
+    required: False
+---
+mandatory: True
+code: |
+  landlord.address.geolocate()
+---
+mandatory: true
+question: |
+  Which Housing Court are you transferring your case to?
+fields: 
+  - Court name: transfer_court_name
+    default: ${local_housing_court}
+    choices:
+      - Central Housing Court
+      - Eastern Housing Court
+      - Metro South Housing Court
+      - Northeast Housing Court
+      - Southeast Housing Court
+      - Western Housing Court
+---
+question: | 
+  What is the Housing Court Address?
+subquestion: |
+  Look at this link of [Housing Court Locations](https://www.mass.gov/orgs/housing-court/locations) and provide the address of the Housing Court you want to transfer to.
+fields:
+  - Housing Court Address: transfer_court_address
+--- 
+question: | 
+  What is Your Current Court Address?
+subquestion: |
+  Look for ${ court.name } on this link of [Courthouse Locations](https://www.mass.gov/guides/alphabetical-listing-of-courthouses) and provide the address below.
+fields:
+  - ${ court.name } Address: current_court_address

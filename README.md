@@ -6,6 +6,13 @@ Request for Discovery, and accompanying forms and motions.
 
 ## Changelog
 
+* 2021-01-05 Bug fix when using new attorney name
+* 2021-01-04 Add support for attorney entering appearance
+* 2021-01-03 Integrate language files
+* 2020-12-10 Edit additional tenant signature
+* 2020-12-02 Language tweaks, compatibility with docassemble 1.2.7
+* 2020-11-18 Translate section labels
+* 2020-11-17 Integrate feedback from housing coalition
 * 2020-11-14 New feedback form that creates Github issues
 * 2020-11-13 Added CARES/CDC language to Answer
 * 2020-11-09 Update language to reflect Housing Court standing order 6-20
